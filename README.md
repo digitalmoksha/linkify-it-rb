@@ -1,5 +1,7 @@
 # linkify-it-rb
 
+[![Gem Version](https://badge.fury.io/rb/linkify-it-rb.svg)](http://badge.fury.io/rb/linkify-it-rb)
+
 Links recognition library with FULL unicode support. Focused on high quality link patterns detection in plain text.  For use with both Ruby and RubyMotion.
 
 This gem is a port of the [linkify-it javascript package](https://github.com/markdown-it/linkify-it) by Vitaly Puzrin, that is used for the [markdown-it](https://github.com/markdown-it/markdown-it) package.
