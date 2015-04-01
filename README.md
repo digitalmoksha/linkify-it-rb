@@ -2,116 +2,107 @@
 
 [![Gem Version](https://badge.fury.io/rb/linkify-it-rb.svg)](http://badge.fury.io/rb/linkify-it-rb)
 
-Links recognition library with FULL unicode support. Focused on high quality link patterns detection in plain text.  For use with both Ruby and RubyMotion.
+Links recognition library with full unicode support. Focused on high quality link pattern detection in plain text.  For use with both Ruby and RubyMotion.
 
 This gem is a port of the [linkify-it javascript package](https://github.com/markdown-it/linkify-it) by Vitaly Puzrin, that is used for the [markdown-it](https://github.com/markdown-it/markdown-it) package.
 
 __[Javascript Demo](http://markdown-it.github.io/linkify-it/)__
 
-_Note:_ This gem is still in progress - some of the Unicode support is still being worked on.
+Features:
 
-
-## To be updated: Original Javascript package documentation
-
-Why it's awesome:
-
-- Full unicode support, _with astral characters_!
-- International domains support.
-- Allows rules extension & custom normalizers.
+- Full unicode support, with astral characters
+- International domain support
+- Allows rules extension & custom normalizers
 
 
 Install
 -------
 
-```bash
-npm install linkify-it --save
-```
+### Ruby
 
-Browserification is also supported.
+Add it to your project's `Gemfile`
 
+	gem 'linkify-it-rb'
+
+and run `bundle install`
+
+### RubyMotion
+
+Add it to your project's `Gemfile`
+
+	gem 'linkify-it-rb'
+
+Edit your `Rakefile` and add
+
+	require 'linkify-it-rb'
+
+and run `bundle install`
 
 Usage examples
 --------------
 
 ##### Example 1
 
-```js
-var linkify = require('linkify-it')();
+```ruby
+linkify = Linkify.new
 
-// Reload full tlds list & add uniffocial `.onion` domain.
-linkify
-  .tlds(require('tlds'))          // Reload with full tlds list
-  .tlds('.onion', true);          // Add uniffocial `.onion` domain
-  .linkify.add('git:', 'http:');  // Add `git:` ptotocol as "alias"
-  .linkify.add('ftp:', null);     // Disable `ftp:` ptotocol
+# add unoffocial `.mydomain` domain.
+linkify.tlds('.mydomain', true)  # Add unofficial `.mydomain` domain
+linkify.add('git:', 'http:')     # Add `git:` ptotocol as "alias"
+linkify.add('ftp:', null)        # Disable `ftp:` ptotocol
 
-console.log(linkify.test('Site github.com!'));  // true
+linkify.test('Site github.com!'))
+=> true
 
-console.log(linkify.match('Site github.com!')); // [ {
-                                                //   schema: "",
-                                                //   index: 5,
-                                                //   lastIndex: 15,
-                                                //   raw: "github.com",
-                                                //   text: "github.com",
-                                                //   url: "http://github.com",
-                                                // } ]
+linkify.match('Site github.com!'))
+=> [#<Linkify::Match @schema="", @index=5, @lastIndex=15, @raw="github.com", @text="github.com", @url="github.com">]
 ```
 
 ##### Exmple 2. Add twitter mentions handler
 
-```js
+```ruby
 linkify.add('@', {
-  validate: function (text, pos, self) {
-    var tail = text.slice(pos);
-
-    if (!self.re.twitter) {
-      self.re.twitter =  new RegExp(
-        '^([a-zA-Z0-9_]){1,15}(?!_)(?=$|' + self.re.src_ZPCcCf + ')'
-      );
-    }
-    if (self.re.twitter.test(tail)) {
-      // Linkifier allows punctuation chars before prefix,
-      // but we additionally disable `@` ("@@mention" is invalid)
-      if (pos >= 2 && tail[pos - 2] === '@') {
-        return false;
-      }
-      return tail.match(self.re.twitter)[0].length;
-    }
-    return 0;
-  },
-  normalize: function (match) {
-    match.url = 'https://twitter.com/' + match.url.replace(/^@/, '');
-  }
-});
+  validate: lambda do |text, pos, obj|
+    tail = text.slice(pos..-1)
+    if (!obj.re[:twitter])
+      obj.re[:twitter] =  Regexp.new('^([a-zA-Z0-9_]){1,15}(?!_)(?=$|' + LinkifyRe::SRC_Z_P_CC + ')')
+    end
+    if (obj.re[:twitter] =~ tail)
+      return 0 if (pos >= 2 && text[pos - 2] == '@')
+      return tail.match(obj.re[:twitter])[0].length
+    end
+    return 0
+  end,
+  normalize: lambda do |m, obj|
+    m.url = 'https://twitter.com/' + m.url.sub(/^@/, '')
+  end
+})
 ```
 
 
 API
 ---
 
-__[API documentation](http://markdown-it.github.io/linkify-it/doc)__
-
-### new LinkifyIt(schemas)
+### LinkifyIt.new(schemas)
 
 Creates new linkifier instance with optional additional schemas.
-Can be called without `new` keyword for convenience.
 
 By default understands:
 
 - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
 - "fuzzy" links and emails (google.com, foo@bar.com).
 
-`schemas` is an object, where each key/value describes protocol/rule:
+`schemas` is a Hash, where each key/value describes protocol/rule:
 
 - __key__ - link prefix (usually, protocol name with `:` at the end, `skype:`
-  for example). `linkify-it` makes shure that prefix is not preceeded with
+  for example). `linkify-it-rb` makes shure that prefix is not preceeded with
   alphanumeric char.
 - __value__ - rule to check tail after link prefix
   - _String_ - just alias to existing rule
-  - _Object_
-    - _validate_ - validator function (should return matched length on success),
+  - _Hash_
+    - _validate_ - validator block (should return matched length on success),
       or `RegExp`.
-    - _normalize_ - optional function to normalize text & url of matched result
+    - _normalize_ - optional block to normalize text & url of matched result
       (for example, for twitter mentions).
 
 
@@ -122,20 +113,20 @@ Searches linkifiable pattern and returns `true` on success or `false` on fail.
 
 ### .pretest(text)
 
-Quick check if link MAY BE can exist. Can be used to optimize more expensive
-`.test()` calls. Return `false` if link can not be found, `true` - if `.test()`
+Quick check if link MAYBE can exist. Can be used to optimize more expensive
+`.test` calls. Return `false` if link can not be found, `true` - if `.test`
 call needed to know exactly.
 
 
 ### .testSchemaAt(text, name, offset)
 
-Similar to `.test()` but checks only specific protocol tail exactly at given
+Similar to `.test` but checks only specific protocol tail exactly at given
 position. Returns length of found pattern (0 on fail).
 
 
 ### .match(text)
 
-Returns `Array` of found link matches or null if nothing found.
+Returns `Array` of found link matches or nil if nothing found.
 
 Each match has:
 
@@ -150,8 +141,8 @@ Each match has:
 
 ### .tlds(list[, keepOld])
 
-Load (or merge) new tlds list. Those are user for fuzzy links (without prefix)
-to avoid false positives. By default this algorythm used:
+Load (or merge) new tlds list. These are used for fuzzy links (without prefix)
+to avoid false positives. By default this algorithm uses:
 
 - hostname with any 2-letter root zones are ok.
 - biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф
@@ -164,9 +155,9 @@ If list is replaced, then exact match for 2-chars root zones will be checked.
 ### .add(schema, definition)
 
 Add new rule with `schema` prefix. For definition details see constructor
-description. To disable existing rule use `.add(name, null)`
+description. To disable existing rule use `.add(name, nil)`
 
 
 ## License
 
-[MIT](https://github.com/markdown-it/linkify-it/blob/master/LICENSE)
+[MIT](https://github.com/digitalmoksha/linkify-it-rb/blob/master/LICENSE)

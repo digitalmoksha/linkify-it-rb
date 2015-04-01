@@ -87,25 +87,17 @@ class Linkify
   #
   #------------------------------------------------------------------------------
   def compile
-
-    # Load & clone RE patterns.
-    re = @re = {}  #.merge!(require('./lib/re'))
+    @re = { src_xn: LinkifyRe::SRC_XN }
 
     # Define dynamic patterns
     tlds = @__tlds__.dup
+    tlds.push('[a-z]{2}') if (!@__tlds_replaced__)
+    tlds.push(@re[:src_xn])
 
-    if (!@__tlds_replaced__)
-      tlds.push('[a-z]{2}')
-    end
-    tlds.push(re[:src_xn])
-
-    re[:src_tlds] = tlds.join('|')
-
-    untpl = lambda { |tpl| tpl.gsub('%TLDS%', re[:src_tlds]) }
-
-    re[:email_fuzzy]      = Regexp.new(LinkifyRe::TPL_EMAIL_FUZZY.gsub('%TLDS%', re[:src_tlds]), true)
-    re[:link_fuzzy]       = Regexp.new(LinkifyRe::TPL_LINK_FUZZY.gsub('%TLDS%', re[:src_tlds]), true)
-    re[:host_fuzzy_test]  = Regexp.new(LinkifyRe::TPL_HOST_FUZZY_TEST.gsub('%TLDS%', re[:src_tlds]), true)
+    @re[:src_tlds] = tlds.join('|')
+    @re[:email_fuzzy]      = Regexp.new(LinkifyRe::TPL_EMAIL_FUZZY.gsub('%TLDS%', @re[:src_tlds]), true)
+    @re[:link_fuzzy]       = Regexp.new(LinkifyRe::TPL_LINK_FUZZY.gsub('%TLDS%', @re[:src_tlds]), true)
+    @re[:host_fuzzy_test]  = Regexp.new(LinkifyRe::TPL_HOST_FUZZY_TEST.gsub('%TLDS%', @re[:src_tlds]), true)
 
     #
     # Compile each schema
@@ -180,8 +172,8 @@ class Linkify
     slist = @__compiled__.select {|name, val| name.length > 0 && !val.nil? }.keys.map {|str| escapeRE(str)}.join('|')
 
     # (?!_) cause 1.5x slowdown
-    @re[:schema_test]   = Regexp.new('(^|(?!_)(?:>|' + LinkifyRe::SRC_Z_P_CC_CF + '))(' + slist + ')', 'i')
-    @re[:schema_search] = Regexp.new('(^|(?!_)(?:>|' + LinkifyRe::SRC_Z_P_CC_CF + '))(' + slist + ')', 'ig')
+    @re[:schema_test]   = Regexp.new('(^|(?!_)(?:>|' + LinkifyRe::SRC_Z_P_CC + '))(' + slist + ')', 'i')
+    @re[:schema_search] = Regexp.new('(^|(?!_)(?:>|' + LinkifyRe::SRC_Z_P_CC + '))(' + slist + ')', 'ig')
 
     @re[:pretest]       = Regexp.new(
                               '(' + @re[:schema_test].source + ')|' +
@@ -318,14 +310,15 @@ class Linkify
     @__index__      = -1
 
     return false if (!text.length)
-
+    
     # try to scan for link with schema - that's the most simple rule
     if @re[:schema_test] =~ text
       re = @re[:schema_search]
-      # re[:lastIndex] = 0
-      while ((m = re.match(text)) != nil)
-        len = testSchemaAt(text, m[2], m.end(0)) #re[:lastIndex])
-        if (len)
+      lastIndex = 0
+      while ((m = re.match(text, lastIndex)) != nil)
+        lastIndex = m.end(0)
+        len       = testSchemaAt(text, m[2], lastIndex)
+        if len > 0
           @__schema__     = m[2]
           @__index__      = m.begin(0) + m[1].length
           @__last_index__ = m.begin(0) + m[0].length + len
@@ -334,9 +327,8 @@ class Linkify
       end
     end
 
+    # guess schemaless links
     if (@__compiled__['http:'])
-      # guess schemaless links
-
       tld_pos = text.index(@re[:host_fuzzy_test])
       if !tld_pos.nil?
         # if tld is located after found link - no need to check fuzzy pattern
@@ -355,8 +347,8 @@ class Linkify
       end
     end
 
+    # guess schemaless emails
     if (@__compiled__['mailto:'])
-      # guess schemaless emails
       at_pos = text.index('@')
       if !at_pos.nil?
         # We can't skip this check, because this cases are possible:
@@ -410,7 +402,7 @@ class Linkify
 
   # LinkifyIt#match(text) -> Array|null
   #
-  # Returns array of found link descriptions or `null` on fail. We strongly
+  # Returns array of found link descriptions or `null` on fail. We strongly suggest
   # to use [[LinkifyIt#test]] first, for best speed.
   #
   # ##### Result match description
