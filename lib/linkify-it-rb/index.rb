@@ -485,7 +485,7 @@ class Linkify
     # Do minimal possible changes by default. Need to collect feedback prior
     # to move forward https://github.com/markdown-it/linkify-it/issues/1
 
-    match.url = 'http://' + match.url if !match.schema
+    match.url = "http://#{match.url}" if match.schema.empty?
 
     if (match.schema == 'mailto:' && !(/^mailto\:/i =~ match.url))
       match.url = 'mailto:' + match.url
