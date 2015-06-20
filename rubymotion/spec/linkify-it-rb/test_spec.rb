@@ -3,7 +3,7 @@ fixture_dir  = File.join(File.dirname(__FILE__), '../../../spec/linkify-it-rb/fi
 #------------------------------------------------------------------------------
 describe 'links' do
 
-  l = Linkify.new
+  l = Linkify.new({}, {fuzzyIP: true})
   l.bypass_normalizer = true    # kill the normalizer
 
   skipNext  = false
@@ -216,6 +216,43 @@ describe 'API' do
     expect(l.match(':@givi')[0].text).to eq '@givi'
     expect(l.match(':@givi')[0].url).to eq 'https://twitter.com/givi'
     expect(l.test('@@invalid')).to eq false
+  end
+
+  #------------------------------------------------------------------------------
+  it 'set option: fuzzyLink' do
+    l = Linkify.new({}, { fuzzyLink: false })
+
+    expect(l.test('google.com.')).to eq false
+
+    l.set({ fuzzyLink: true })
+
+    expect(l.test('google.com.')).to eq true
+    expect(l.match('google.com.')[0].text).to eq 'google.com'
+  end
+
+
+  #------------------------------------------------------------------------------
+  it 'set option: fuzzyEmail' do
+    l = Linkify.new({}, { fuzzyEmail: false })
+
+    expect(l.test('foo@bar.com.')).to eq false
+
+    l.set({ fuzzyEmail: true })
+
+    expect(l.test('foo@bar.com.')).to eq true
+    expect(l.match('foo@bar.com.')[0].text).to eq 'foo@bar.com'
+  end
+
+  #------------------------------------------------------------------------------
+  it 'set option: fuzzyIP' do
+    l = Linkify.new
+
+    expect(l.test('1.1.1.1.')).to eq false
+
+    l.set({ fuzzyIP: true })
+
+    expect(l.test('1.1.1.1.')).to eq true
+    expect(l.match('1.1.1.1.')[0].text).to eq '1.1.1.1'
   end
 
 end
