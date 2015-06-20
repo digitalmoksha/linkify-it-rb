@@ -39,8 +39,11 @@ module LinkifyRe
             '\\"(?:(?!' + SRC_Z_CC + '|["]).)+\\"|' +
             "\\'(?:(?!" + SRC_Z_CC + "|[']).)+\\'|" +
             "\\'(?=" + SRC_PSEUDO_LETTER + ').|' +  # allow `I'm_king` if no pair found
-            '\\.{2,3}[a-zA-Z0-9%]|' + # github has ... in commit range links. Restrict to
-                                      # english & percent-encoded only, until more examples found.
+            '\\.{2,3}[a-zA-Z0-9%/]|' + # github has ... in commit range links. Restrict to
+                                       # - english
+                                       # - percent-encoded
+                                       # - parts of file path
+                                       # until more examples found.
             '\\.(?!' + SRC_Z_CC + '|[.]).|' +
             '\\-(?!' + SRC_Z_CC + '|--(?:[^-]|$))(?:[-]+|.)|' +  # `---` => long dash, terminate
             '\\,(?!' + SRC_Z_CC + ').|' +      # allow `,,,` in paths
@@ -90,11 +93,15 @@ module LinkifyRe
         '(?:(?:(?:' + SRC_DOMAIN + ')\\.)+(?:%TLDS%))' +
       ')'
 
+    TPL_HOST_NO_IP_FUZZY =
+      '(?:(?:(?:' + SRC_DOMAIN + ')\\.)+(?:%TLDS%))'
+
     SRC_HOST_STRICT            = SRC_HOST + SRC_HOST_TERMINATOR
     TPL_HOST_FUZZY_STRICT      = TPL_HOST_FUZZY + SRC_HOST_TERMINATOR
     SRC_HOST_PORT_STRICT       = SRC_HOST + SRC_PORT + SRC_HOST_TERMINATOR
     TPL_HOST_PORT_FUZZY_STRICT = TPL_HOST_FUZZY + SRC_PORT + SRC_HOST_TERMINATOR
-
+    TPL_HOST_PORT_NO_IP_FUZZY_STRICT = TPL_HOST_NO_IP_FUZZY + SRC_PORT + SRC_HOST_TERMINATOR
+      
     #------------------------------------------------------------------------------
     # Main rules
 
@@ -107,4 +114,9 @@ module LinkifyRe
         '(^|(?![.:/\\-_@])(?:[$+<=>^`|]|' + SRC_Z_P_CC + '))' +
         '((?![$+<=>^`|])' + TPL_HOST_PORT_FUZZY_STRICT + SRC_PATH + ')'
 
+    TPL_LINK_NO_IP_FUZZY =
+        # Fuzzy link can't be prepended with .:/\- and non punctuation.
+        # but can start with > (markdown blockquote)
+        '(^|(?![.:/\\-_@])(?:[$+<=>^`|]|' + SRC_Z_P_CC + '))' +
+        '((?![$+<=>^`|])' + TPL_HOST_PORT_NO_IP_FUZZY_STRICT + SRC_PATH + ')'
 end

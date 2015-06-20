@@ -146,10 +146,15 @@ http://example.com/foo_bar/
 http://example.com/foo_bar,
 http://example.com/foo_bar
 
+https://github.com/markdown-it/linkify-it/compare/360b13a733f521a8d4903d3a5e1e46c357e9d3ce...f580766349525150a80a32987bb47c2d592efc33
+
 http://example.com/foo_bar...
 http://example.com/foo_bar
 
-https://github.com/markdown-it/linkify-it/compare/360b13a733f521a8d4903d3a5e1e46c357e9d3ce...f580766349525150a80a32987bb47c2d592efc33
+http://172.26.142.48/viewerjs/#../0529/slides.pdf
+
+http://example.com/foo_bar..
+http://example.com/foo_bar
 
 http://example.com/foo_bar?p=10.
 http://example.com/foo_bar?p=10
@@ -213,4 +218,17 @@ example.com/䨹
 
 президент.рф
 
-xn--d1abbgf6aiiy.xn--p1ai
+% Links below provided by diaspora* guys, to make sure regressions will not happen.
+% Those left here for historic reasons.
+
+http://www.bürgerentscheid-krankenhäuser.de
+
+http://www.xn--brgerentscheid-krankenhuser-xkc78d.de
+
+http://bündnis-für-krankenhäuser.de/wp-content/uploads/2011/11/cropped-logohp.jpg
+
+http://xn--bndnis-fr-krankenhuser-i5b27cha.de/wp-content/uploads/2011/11/cropped-logohp.jpg
+
+http://ﻡﻮﻘﻋ.ﻭﺯﺍﺭﺓ-ﺍﻼﺘﺻﺍﻼﺗ.ﻢﺻﺭ/
+
+http://xn--4gbrim.xn----ymcbaaajlc6dj7bxne2c.xn--wgbh1c/

@@ -46,10 +46,11 @@ Usage examples
 ```ruby
 linkify = Linkify.new
 
-# add unoffocial `.mydomain` domain.
-linkify.tlds('.mydomain', true)  # Add unofficial `.mydomain` domain
+# add unoffocial `.onion` domain.
+linkify.tlds('.onion', true)     # Add unofficial `.onion` domain
 linkify.add('git:', 'http:')     # Add `git:` ptotocol as "alias"
 linkify.add('ftp:', null)        # Disable `ftp:` ptotocol
+linkify.set({fuzzyIP: true})     # Enable IPs in fuzzy links (without schema)
 
 linkify.test('Site github.com!'))
 => true
@@ -83,7 +84,7 @@ linkify.add('@', {
 API
 ---
 
-### LinkifyIt.new(schemas)
+### LinkifyIt.new(schemas, options)
 
 Creates new linkifier instance with optional additional schemas.
 
@@ -104,6 +105,13 @@ By default understands:
       or `RegExp`.
     - _normalize_ - optional block to normalize text & url of matched result
       (for example, for twitter mentions).
+
+`options`:
+
+- __fuzzyLink__ - recognige URL-s without `http(s):` prefix. Default `true`.
+- __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
+  like version numbers. Default `false`.
+- __fuzzyEmail__ - recognize emails without `mailto:` prefix.
 
 
 ### .test(text)
@@ -157,6 +165,9 @@ If list is replaced, then exact match for 2-chars root zones will be checked.
 Add new rule with `schema` prefix. For definition details see constructor
 description. To disable existing rule use `.add(name, nil)`
 
+### .set(options)
+
+Override default options. Missed properties will not be changed.
 
 ## License
 
