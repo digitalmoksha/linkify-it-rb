@@ -1,7 +1,10 @@
-1.1.1.0
+1.2.0
 -------
 
-Synced with linkify-it 1.1.1, includes these changes:
+Synced with linkify-it 1.2.0, includes these changes:
+
+* 1.2.0 / 2015-06-29
+  - Allow dash at the end of url, thanks to @Mumakil.
 
 * 1.1.1 / 2015-06-09
   - Allow ".." in link paths.

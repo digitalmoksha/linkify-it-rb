@@ -45,7 +45,7 @@ module LinkifyRe
                                        # - parts of file path
                                        # until more examples found.
             '\\.(?!' + SRC_Z_CC + '|[.]).|' +
-            '\\-(?!' + SRC_Z_CC + '|--(?:[^-]|$))(?:[-]+|.)|' +  # `---` => long dash, terminate
+            '\\-(?!--(?:[^-]|$))(?:-*)|' +  # `---` => long dash, terminate
             '\\,(?!' + SRC_Z_CC + ').|' +      # allow `,,,` in paths
             '\\!(?!' + SRC_Z_CC + '|[!]).|' +
             '\\?(?!' + SRC_Z_CC + '|[?]).' +
