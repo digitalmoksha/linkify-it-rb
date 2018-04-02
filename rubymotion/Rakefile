@@ -7,7 +7,7 @@ require "motion/project/template/#{platform}"
 require 'rubygems'
 
 testing = true if ARGV.join(' ') =~ /spec/
-  
+
 begin
   require 'bundler'
   testing ? Bundler.require(:default, :spec) : Bundler.require
@@ -17,4 +17,6 @@ end
 Motion::Project::App.setup do |app|
   app.name        = 'linkify-it-rb'
   app.identifier  = 'com.motion-gemtest.linkify-it-rb'
+
+  app.detect_dependencies = true
 end
