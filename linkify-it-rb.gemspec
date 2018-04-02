@@ -17,4 +17,6 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency 'uc.micro-rb', '~> 1.0'
+
+  gem.add_development_dependency 'bacon-expect', '~> 1.0' # required for Travis build to work
 end

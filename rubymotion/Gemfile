@@ -1,7 +1,10 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'bacon-expect'
+
+group :spec do
+  gem 'bacon-expect'
+end
 
 gemspec path: '..'
 
