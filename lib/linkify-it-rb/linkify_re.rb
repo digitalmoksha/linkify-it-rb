@@ -1,5 +1,4 @@
 module LinkifyRe
-  extend self
 
     # Use direct extract instead of `regenerate` to reduce size
     SRC_ANY = UCMicro::Properties::Any::REGEX.source
