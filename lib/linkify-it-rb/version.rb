@@ -1,5 +1,5 @@
 module LinkifyIt
 
-  VERSION = '1.2.0'
+  VERSION = '2.0.3'
 
 end

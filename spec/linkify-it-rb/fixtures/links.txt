@@ -17,6 +17,9 @@ http://user@example.com:8080
 
 http://user:pass@example.com
 
+[https](https://www.ibm.com)[mailto](mailto:someone@ibm.com) % should not catch as auth (before @ in big link)
+https://www.ibm.com
+
 http://example.com:8080
 
 http://example.com/?foo=bar
@@ -34,6 +37,15 @@ HTTP://GOOGLE.COM
 http://example.invalid % don't restrict root domain when schema exists
 http://example.invalid
 
+http://inrgess2 % Allow local domains to end with digit
+http://inrgess2
+
+http://999      % ..and start with digit, and have digits only
+http://999
+
+http://host-name % local domain with dash
+http://host-name
+
 >>example.com % markdown blockquote
 example.com
 
@@ -47,6 +59,8 @@ http://lyricstranslate.com/en/someone-you-നിന്നെ-പോലൊരാ�
 % localhost (only with protocol allowed)
 %
 //localhost
+
+//test.123
 
 http://localhost:8000?
 http://localhost:8000
@@ -115,6 +129,8 @@ http://foo.com/blah_blah_{I'm_king}
 
 http://foo.com/blah_blah_I'm_king
 
+http://www.kmart.com/bestway-10'-x-30inch-steel-pro-frame-pool/p-004W007538417001P
+
 http://foo.com/blah_blah_"doublequoted"
 
 http://foo.com/blah_blah_'singlequoted'
@@ -172,16 +188,42 @@ http://example.com/123
 
 http://example.com/foo--bar
 
-http://example.com/foo---bar  % Markdown dash
-http://example.com/foo
-
-http://example.com/foo----bar
-
 % some sites have links with trailing dashes
 http://www.bloomberg.com/news/articles/2015-06-26/from-deutsche-bank-to-siemens-what-s-troubling-germany-inc-
 
 http://example.com/foo-with-trailing-dash-dot-.
 http://example.com/foo-with-trailing-dash-dot-
+
+<http://domain.com>
+http://domain.com
+
+<http://domain.com>.
+http://domain.com
+
+<http://domain.com/foo>
+http://domain.com/foo
+
+<http://domain.com/foo>.
+http://domain.com/foo
+
+<domain.com>
+domain.com
+
+<domain.com>.
+domain.com
+
+<domain.com/foo>
+domain.com/foo
+
+<user@domain.com>
+user@domain.com
+
+<user@domain.com>.
+user@domain.com
+
+<mailto:user@domain.com>
+mailto:user@domain.com
+
 
 %
 % Emails
@@ -208,6 +250,15 @@ foo+bar@gmail.com
 mailto:foo@bar      % explicit protocol make it valid
 mailto:foo@bar
 
+(foobar email@example.com)
+email@example.com
+
+(email@example.com foobar)
+email@example.com
+
+(email@example.com)
+email@example.com
+
 
 %
 % International
@@ -224,6 +275,7 @@ example.com/䨹
 
 президент.рф
 
+
 % Links below provided by diaspora* guys, to make sure regressions will not happen.
 % Those left here for historic reasons.
 
@@ -238,3 +290,15 @@ http://xn--bndnis-fr-krankenhuser-i5b27cha.de/wp-content/uploads/2011/11/cropped
 http://ﻡﻮﻘﻋ.ﻭﺯﺍﺭﺓ-ﺍﻼﺘﺻﺍﻼﺗ.ﻢﺻﺭ/
 
 http://xn--4gbrim.xn----ymcbaaajlc6dj7bxne2c.xn--wgbh1c/
+
+%
+% Others...
+%
+｜www.google.com/www.google.com/foo｜bar    % #46, asian vertical pipes
+www.google.com/www.google.com/foo
+
+｜test@google.com｜bar
+test@google.com
+
+｜http://google.com｜bar
+http://google.com

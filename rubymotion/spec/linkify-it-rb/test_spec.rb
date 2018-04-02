@@ -255,4 +255,23 @@ describe 'API' do
     expect(l.match('1.1.1.1.')[0].text).to eq '1.1.1.1'
   end
 
+  #------------------------------------------------------------------------------
+  it 'should not hang in fuzzy mode with sequences of astrals' do
+    l = Linkify.new
+
+    l.set({ fuzzyLink: true })
+
+    expect(l.match('😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡 .com')).to eq []
+  end
+
+  #------------------------------------------------------------------------------
+  it 'should accept `---` if enabled' do
+    l = Linkify.new
+
+    expect(l.match('http://e.com/foo---bar')[0].text).to eq 'http://e.com/foo---bar'
+
+    l = Linkify.new(nil, { :'---' => true })
+
+    expect(l.match('http://e.com/foo---bar')[0].text).to eq 'http://e.com/foo'
+  end
 end

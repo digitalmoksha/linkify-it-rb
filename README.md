@@ -1,10 +1,15 @@
 # linkify-it-rb
 
 [![Gem Version](https://badge.fury.io/rb/linkify-it-rb.svg)](http://badge.fury.io/rb/linkify-it-rb)
-
-Links recognition library with full unicode support. Focused on high quality link pattern detection in plain text.  For use with both Ruby and RubyMotion.
+[![Build Status](https://travis-ci.org/digitalmoksha/linkify-it-rb.svg?branch=master)](https://travis-ci.org/digitalmoksha/linkify-it-rb)
 
 This gem is a port of the [linkify-it javascript package](https://github.com/markdown-it/linkify-it) by Vitaly Puzrin, that is used for the [markdown-it](https://github.com/markdown-it/markdown-it) package.
+
+_Currently synced with linkify-it 2.0.3_
+
+---
+
+Links recognition library with full unicode support. Focused on high quality link pattern detection in plain text.  For use with both Ruby and RubyMotion.
 
 __[Javascript Demo](http://markdown-it.github.io/linkify-it/)__
 
@@ -46,8 +51,8 @@ Usage examples
 ```ruby
 linkify = Linkify.new
 
-# add unoffocial `.onion` domain.
-linkify.tlds('.onion', true)     # Add unofficial `.onion` domain
+# Reload full tlds list & add unofficial `.onion` domain.
+linkify.tlds('onion', true)      # Add unofficial `.onion` domain
 linkify.add('git:', 'http:')     # Add `git:` ptotocol as "alias"
 linkify.add('ftp:', null)        # Disable `ftp:` ptotocol
 linkify.set({fuzzyIP: true})     # Enable IPs in fuzzy links (without schema)
@@ -59,7 +64,7 @@ linkify.match('Site github.com!'))
 => [#<Linkify::Match @schema="", @index=5, @lastIndex=15, @raw="github.com", @text="github.com", @url="github.com">]
 ```
 
-##### Exmple 2. Add twitter mentions handler
+##### Example 2. Add twitter mentions handler
 
 ```ruby
 linkify.add('@', {
@@ -96,7 +101,7 @@ By default understands:
 `schemas` is a Hash, where each key/value describes protocol/rule:
 
 - __key__ - link prefix (usually, protocol name with `:` at the end, `skype:`
-  for example). `linkify-it-rb` makes shure that prefix is not preceeded with
+  for example). `linkify-it-rb` makes sure that prefix is not preceded with
   alphanumeric char.
 - __value__ - rule to check tail after link prefix
   - _String_ - just alias to existing rule
@@ -108,10 +113,11 @@ By default understands:
 
 `options`:
 
-- __fuzzyLink__ - recognige URL-s without `http(s):` prefix. Default `true`.
+- __fuzzyLink__ - recognize URL-s without `http(s)://` head. Default `true`.
 - __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
   like version numbers. Default `false`.
-- __fuzzyEmail__ - recognize emails without `mailto:` prefix.
+- __fuzzyEmail__ - recognize emails without `mailto:` prefix. Default `true`.
+- __---__ - set `true` to terminate link with `---` (if it's considered as long dash).
 
 
 ### .test(text)
@@ -149,16 +155,14 @@ Each match has:
 
 ### .tlds(list[, keepOld])
 
-Load (or merge) new tlds list. These are used for fuzzy links (without prefix)
+Load (or merge) new tlds list. These are needed for fuzzy links (without schema)
 to avoid false positives. By default this algorithm uses:
 
-- hostname with any 2-letter root zones are ok.
-- biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф
-  are ok.
+- 2-letter root zones are ok.
+- biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф are ok.
 - encoded (`xn--...`) root zones are ok.
 
-If list is replaced, then exact match for 2-chars root zones will be checked.
-
+If that's not enougth, you can reload defaults with more detailed zones list.
 
 ### .add(schema, definition)
 
