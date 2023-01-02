@@ -205,7 +205,7 @@ class Linkify
 
     # (?!_) cause 1.5x slowdown
     @re[:schema_test]   = Regexp.new('(^|(?!_)(?:[><\uff5c]|' + @re[:src_XPCc] + '))(' + slist + ')', 'i')
-    @re[:schema_search] = Regexp.new('(^|(?!_)(?:[><\uff5c]|' + @re[:src_XPCc] + '))(' + slist + ')', 'ig')
+    @re[:schema_search] = Regexp.new('(^|(?!_)(?:[><\uff5c]|' + @re[:src_XPCc] + '))(' + slist + ')', 'i')
 
     @re[:pretest]       = Regexp.new(
                               '(' + @re[:schema_test].source + ')|' +
