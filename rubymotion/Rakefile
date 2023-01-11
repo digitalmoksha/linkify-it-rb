@@ -1,9 +1,19 @@
-# -*- coding: utf-8 -*-
-$:.unshift("/Library/RubyMotion/lib")
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift('/Library/RubyMotion/lib')
+$LOAD_PATH.unshift('~/.rubymotion/rubymotion-templates')
+require 'pry-byebug'
 
 platform = ENV.fetch('platform', 'osx')
-
 require "motion/project/template/#{platform}"
+
+Motion::Project::App.setup do |app|
+  app.name        = 'linkify-it-rb'
+  app.identifier  = 'com.motion-gemtest.linkify-it-rb'
+
+  app.deployment_target = '11.0'
+end
+
 require 'rubygems'
 
 testing = true if ARGV.join(' ') =~ /spec/
@@ -14,11 +24,5 @@ begin
 rescue LoadError
 end
 
-require 'bacon-expect' if testing
+require 'motion-expect' if testing
 
-Motion::Project::App.setup do |app|
-  app.name        = 'linkify-it-rb'
-  app.identifier  = 'com.motion-gemtest.linkify-it-rb'
-
-  app.detect_dependencies = true
-end
