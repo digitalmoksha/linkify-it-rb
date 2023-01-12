@@ -7,19 +7,20 @@ require 'pry-byebug'
 platform = ENV.fetch('platform', 'osx')
 require "motion/project/template/#{platform}"
 
+# set these upfront, otherwise other gems using `setup` could cause
+# internal validations to fail on incorrect deployment_target/sdk_version
 Motion::Project::App.setup do |app|
   app.name        = 'linkify-it-rb'
   app.identifier  = 'com.motion-gemtest.linkify-it-rb'
-
   app.deployment_target = '11.0'
 end
 
 require 'rubygems'
 
-testing = true if ARGV.join(' ') =~ /spec/
-
 begin
   require 'bundler'
+
+  testing = true if ARGV.join(' ') =~ /spec/
   testing ? Bundler.require(:default, :spec) : Bundler.require
 rescue LoadError
 end

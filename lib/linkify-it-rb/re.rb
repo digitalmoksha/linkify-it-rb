@@ -56,10 +56,7 @@ module LinkifyRe
         '|' +
         '(?:' + SRC_PSEUDO_LETTER + ')' +
         '|' +
-        # don't allow `--` in domain names, because:
-        # - that can conflict with markdown &mdash; / &ndash;
-        # - nobody use those anyway
-        '(?:' + SRC_PSEUDO_LETTER + '(?:-(?!-)|' + SRC_PSEUDO_LETTER + '){0,61}' + SRC_PSEUDO_LETTER + ')' +
+        '(?:' + SRC_PSEUDO_LETTER + '(?:-|' + SRC_PSEUDO_LETTER + '){0,61}' + SRC_PSEUDO_LETTER + ')' +
       ')'
 
     SRC_HOST =

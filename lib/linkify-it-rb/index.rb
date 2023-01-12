@@ -207,9 +207,10 @@ class Linkify
     @re[:schema_test]   = Regexp.new('(^|(?!_)(?:[><\uff5c]|' + @re[:src_XPCc] + '))(' + slist + ')', 'i')
     @re[:schema_search] = Regexp.new('(^|(?!_)(?:[><\uff5c]|' + @re[:src_XPCc] + '))(' + slist + ')', 'i')
 
-    @re[:pretest]       = Regexp.new(
-                              '(' + @re[:schema_test].source + ')|' +
-                              '(' + @re[:host_fuzzy_test].source + ')|' + '@', 'i')
+    @re[:pretest] = Regexp.new(
+      '(' + @re[:schema_test].source + ')|(' + @re[:host_fuzzy_test].source + ')|@',
+      'i'
+    )
 
     #
     # Cleanup
