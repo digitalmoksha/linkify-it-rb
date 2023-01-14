@@ -1,11 +1,11 @@
 # linkify-it-rb
 
 [![Gem Version](https://badge.fury.io/rb/linkify-it-rb.svg)](http://badge.fury.io/rb/linkify-it-rb)
-[![Build Status](https://travis-ci.org/digitalmoksha/linkify-it-rb.svg?branch=master)](https://travis-ci.org/digitalmoksha/linkify-it-rb)
+[![Build Status](https://github.com/digitalmoksha/linkify-it-rb/actions/workflows/ci.yml/badge.svg)](https://github.com/digitalmoksha/linkify-it-rb/actions/workflows/ci.yml)
 
 This gem is a port of the [linkify-it javascript package](https://github.com/markdown-it/linkify-it) by Vitaly Puzrin, that is used for the [markdown-it](https://github.com/markdown-it/markdown-it) package.
 
-_Currently synced with linkify-it 2.0.3_
+_Currently synced with linkify-it 4.0.1_
 
 ---
 
@@ -53,8 +53,8 @@ linkify = Linkify.new
 
 # Reload full tlds list & add unofficial `.onion` domain.
 linkify.tlds('onion', true)      # Add unofficial `.onion` domain
-linkify.add('git:', 'http:')     # Add `git:` ptotocol as "alias"
-linkify.add('ftp:', null)        # Disable `ftp:` ptotocol
+linkify.add('git:', 'http:')     # Add `git:` protocol as "alias"
+linkify.add('ftp:', null)        # Disable `ftp:` protocol
 linkify.set({fuzzyIP: true})     # Enable IPs in fuzzy links (without schema)
 
 linkify.test('Site github.com!'))
@@ -106,8 +106,11 @@ By default understands:
 - __value__ - rule to check tail after link prefix
   - _String_ - just alias to existing rule
   - _Hash_
-    - _validate_ - validator block (should return matched length on success),
-      or `RegExp`.
+    - _validate_ - either a `RegExp (start with `^`, and don't include the
+      link prefix itself), or a validator block which, given arguments,
+      _text_, _pos_, and _self_, returns the length of a match in _text_
+      starting at index _pos_.  _pos_ is the index right after the link prefix.
+      _self_ can be used to access the linkify object to cache data.
     - _normalize_ - optional block to normalize text & url of matched result
       (for example, for twitter mentions).
 
@@ -152,6 +155,11 @@ Each match has:
 - __text__ - normalized text
 - __url__ - link, generated from matched text
 
+### .matchAtStart(text)
+
+Checks if a match exists at the start of the string. Returns `Match`
+(see docs for `match(text)`) or nil if no URL is at the start.
+Doesn't work with fuzzy links.
 
 ### .tlds(list[, keepOld])
 
@@ -162,12 +170,15 @@ to avoid false positives. By default this algorithm uses:
 - biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф are ok.
 - encoded (`xn--...`) root zones are ok.
 
-If that's not enougth, you can reload defaults with more detailed zones list.
+If that's not enough, you can reload defaults with more detailed zones list.
 
-### .add(schema, definition)
+### .add(key, value)
 
-Add new rule with `schema` prefix. For definition details see constructor
-description. To disable existing rule use `.add(name, nil)`
+Add a new schema to the schemas object.  As described in the constructor
+definition, `key` is a link prefix (`skype:`, for example), and `value`
+is a String to alias to another schema, or an Object with `validate` and
+optionally `normalize` definitions.  To disable an existing rule, use
+`.add(key, null)`.
 
 ### .set(options)
 
