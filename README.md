@@ -5,7 +5,7 @@
 
 This gem is a port of the [linkify-it javascript package](https://github.com/markdown-it/linkify-it) by Vitaly Puzrin, that is used for the [markdown-it](https://github.com/markdown-it/markdown-it) package.
 
-_Currently synced with linkify-it 3.0.0_
+_Currently synced with linkify-it 3.0.3_
 
 ---
 

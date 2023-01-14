@@ -148,7 +148,7 @@ module LinkifyRe
     '(?:' +
       '[/?#]' +
         '(?:' +
-          '(?!' + SRC_Z_CC + '|' + TEXT_SEPARATORS + '|[()\\[\\]{}.,"\'?!\\-]).|' +
+          '(?!' + SRC_Z_CC + '|' + TEXT_SEPARATORS + '|[()\\[\\]{}.,"\'?!\\-;]).|' +
           '\\[(?:(?!' + SRC_Z_CC + '|\\]).)*\\]|' +
           '\\((?:(?!' + SRC_Z_CC + '|[)]).)*\\)|' +
           '\\{(?:(?!' + SRC_Z_CC + '|[}]).)*\\}|' +
@@ -170,7 +170,8 @@ module LinkifyRe
             '\\-+|'
           ) +
           '\\,(?!' + SRC_Z_CC + ').|' +      # allow `,,,` in paths
-          '\\!(?!' + SRC_Z_CC + ').|' +      # allow `!!!` in paths
+          '\\;(?!' + SRC_Z_CC + ').|' +      # allow `;` if not followed by space-like char
+          '\\!+(?!' + SRC_Z_CC + '|[!]).|' + # allow `!!!` in paths, but not at the end
           '\\?(?!' + SRC_Z_CC + '|[?]).' +
         ')+' +
       '|\\/' +
