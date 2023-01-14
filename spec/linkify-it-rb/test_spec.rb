@@ -273,5 +273,30 @@ describe 'API' do
     l = Linkify.new(nil, { '---': true })
 
     expect(l.match('http://e.com/foo---bar')[0].text).to eq 'http://e.com/foo'
+    expect(l.match('text@example.com---foo')).to be_empty
+  end
+
+  #------------------------------------------------------------------------------
+  it 'should find a match at the start' do
+    l = Linkify.new
+
+    l.set({ fuzzyLink: true })
+
+    expect(l.matchAtStart('http://google.com 123').text).to eq 'http://google.com'
+    expect(l.matchAtStart('google.com 123')).to be_nil
+    expect(l.matchAtStart('  http://google.com 123')).to be_nil
+  end
+
+  #------------------------------------------------------------------------------
+  it 'matchAtStart should not interfere with normal match' do
+    l = Linkify.new
+
+    str = 'http://google.com http://google.com'
+    expect(l.matchAtStart(str)).not_to be_nil
+    expect(l.match(str).length).to eq 2
+
+    str = 'aaa http://google.com http://google.com'
+    expect(l.matchAtStart(str)).to be_nil
+    expect(l.match(str).length).to eq 2
   end
 end

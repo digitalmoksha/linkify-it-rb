@@ -1,11 +1,11 @@
 # linkify-it-rb
 
 [![Gem Version](https://badge.fury.io/rb/linkify-it-rb.svg)](http://badge.fury.io/rb/linkify-it-rb)
-[![Build Status](https://travis-ci.org/digitalmoksha/linkify-it-rb.svg?branch=master)](https://travis-ci.org/digitalmoksha/linkify-it-rb)
+[![Build Status](https://github.com/digitalmoksha/linkify-it-rb/actions/workflows/ci.yml/badge.svg)](https://github.com/digitalmoksha/linkify-it-rb/actions/workflows/ci.yml)
 
 This gem is a port of the [linkify-it javascript package](https://github.com/markdown-it/linkify-it) by Vitaly Puzrin, that is used for the [markdown-it](https://github.com/markdown-it/markdown-it) package.
 
-_Currently synced with linkify-it 3.0.3_
+_Currently synced with linkify-it 4.0.0_
 
 ---
 
@@ -155,6 +155,11 @@ Each match has:
 - __text__ - normalized text
 - __url__ - link, generated from matched text
 
+### .matchAtStart(text)
+
+Checks if a match exists at the start of the string. Returns `Match`
+(see docs for `match(text)`) or nil if no URL is at the start.
+Doesn't work with fuzzy links.
 
 ### .tlds(list[, keepOld])
 

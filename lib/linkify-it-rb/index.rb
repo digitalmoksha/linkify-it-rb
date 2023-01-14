@@ -204,8 +204,9 @@ class Linkify
     slist = @__compiled__.select {|name, val| name.length > 0 && !val.nil? }.keys.map {|str| escapeRE(str)}.join('|')
 
     # (?!_) cause 1.5x slowdown
-    @re[:schema_test]   = Regexp.new('(^|(?!_)(?:[><\uff5c]|' + @re[:src_XPCc] + '))(' + slist + ')', 'i')
-    @re[:schema_search] = Regexp.new('(^|(?!_)(?:[><\uff5c]|' + @re[:src_XPCc] + '))(' + slist + ')', 'i')
+    @re[:schema_test]     = Regexp.new('(^|(?!_)(?:[><\uff5c]|' + @re[:src_XPCc] + '))(' + slist + ')', 'i')
+    @re[:schema_search]   = Regexp.new('(^|(?!_)(?:[><\uff5c]|' + @re[:src_XPCc] + '))(' + slist + ')', 'i')
+    @re[:schema_at_start] = Regexp.new('^' + @re[:schema_search].source, 'i')
 
     @re[:pretest] = Regexp.new(
       '(' + @re[:schema_test].source + ')|(' + @re[:host_fuzzy_test].source + ')|@',
@@ -506,6 +507,30 @@ class Linkify
     return nil
   end
 
+  # LinkifyIt#matchAtStart(text) -> Match|null
+  #
+  # Returns fully-formed (not fuzzy) link if it starts at the beginning
+  # of the string, and null otherwise.
+  #------------------------------------------------------------------------------
+  def matchAtStart(text)
+    # Reset scan cache
+    @__text_cache__ = text
+    @__index__      = -1
+
+    return nil if !text.length
+
+    m = @re[:schema_at_start].match(text)
+    return nil unless m
+
+    len = testSchemaAt(text, m[2], m[0].length)
+    if len
+      @__schema__     = m[2];
+      @__index__      = m.begin(0) + m[1].length
+      @__last_index__ = m.begin(0) + m[0].length + len
+    end
+
+    return Match.createMatch(self, 0)
+  end
 
   # chainable
   # LinkifyIt#tlds(list [, keepOld]) -> this
