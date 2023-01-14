@@ -155,12 +155,13 @@ module LinkifyRe
           '\\"(?:(?!' + SRC_Z_CC + '|["]).)+\\"|' +
           "\\'(?:(?!" + SRC_Z_CC + "|[']).)+\\'|" +
           "\\'(?=" + SRC_PSEUDO_LETTER + '|[-]).|' +  # allow `I'm_king` if no pair found
-          '\\.{2,4}[a-zA-Z0-9%/]|' + # github has ... in commit range links,
-                                     # google has .... in links (issue #66)
+          '\\.{2,}[a-zA-Z0-9%/&]|' + # google has many dots in "google search" links (#66, #81).
+                                     # github has ... in commit range links,
                                      # Restrict to
                                      # - english
                                      # - percent-encoded
                                      # - parts of file path
+                                     # - params separator
                                      # until more examples found.
           '\\.(?!' + SRC_Z_CC + '|[.]).|' +
           (opts && opts[:'---'] ?
@@ -169,11 +170,10 @@ module LinkifyRe
             '\\-+|'
           ) +
           '\\,(?!' + SRC_Z_CC + ').|' +      # allow `,,,` in paths
-          '\\!(?!' + SRC_Z_CC + '|[!]).|' +
+          '\\!(?!' + SRC_Z_CC + ').|' +      # allow `!!!` in paths
           '\\?(?!' + SRC_Z_CC + '|[?]).' +
         ')+' +
       '|\\/' +
     ')?'
-end
-
+  end
 end
