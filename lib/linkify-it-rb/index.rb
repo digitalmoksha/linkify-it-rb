@@ -517,17 +517,17 @@ class Linkify
     @__text_cache__ = text
     @__index__      = -1
 
-    return nil if !text.length
+    return unless text.length
 
     m = @re[:schema_at_start].match(text)
     return nil unless m
 
     len = testSchemaAt(text, m[2], m[0].length)
-    if len
-      @__schema__     = m[2];
-      @__index__      = m.begin(0) + m[1].length
-      @__last_index__ = m.begin(0) + m[0].length + len
-    end
+    return nil unless len > 0
+
+    @__schema__     = m[2];
+    @__index__      = m.begin(0) + m[1].length
+    @__last_index__ = m.begin(0) + m[0].length + len
 
     return Match.createMatch(self, 0)
   end

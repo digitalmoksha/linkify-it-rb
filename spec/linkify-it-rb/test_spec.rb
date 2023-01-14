@@ -299,4 +299,13 @@ describe 'API' do
     expect(l.matchAtStart(str)).to be_nil
     expect(l.match(str).length).to eq 2
   end
+
+  #------------------------------------------------------------------------------
+  it 'should not match incomplete links' do
+    # regression test for https://github.com/markdown-it/markdown-it/issues/868
+    l = Linkify.new
+
+    expect(l.matchAtStart('http://')).to be_nil
+    expect(l.matchAtStart('https://')).to be_nil
+  end
 end
