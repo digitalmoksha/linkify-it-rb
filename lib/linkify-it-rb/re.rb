@@ -36,7 +36,9 @@ module LinkifyRe
 
     # moved SRC_PATH into re_src_path
 
-    SRC_EMAIL_NAME  = '[\\-;:&=\\+\\$,\\"\\.a-zA-Z0-9_]+'
+    # Allow anything in markdown spec, forbid quote (") at the first position
+    # because emails enclosed in quotes are far more common
+    SRC_EMAIL_NAME  = '[\\-;:&=\\+\\$,\\.a-zA-Z0-9_][\\-;:&=\\+\\$,\\"\\.a-zA-Z0-9_]*'
     SRC_XN          = 'xn--[a-z0-9\\-]{1,59}'
 
     # More to read about domain names
@@ -88,7 +90,8 @@ module LinkifyRe
 
     # Rude test fuzzy links by host, for quick deny
     TPL_HOST_FUZZY_TEST = 'localhost|www\\.|\\.\\d{1,3}\\.|(?:\\.(?:%TLDS%)(?:' + SRC_Z_P_CC + '|>|$))'
-    TPL_EMAIL_FUZZY     = '(^|' + TEXT_SEPARATORS + '|\\(|' +SRC_Z_CC + ')(' + SRC_EMAIL_NAME + '@' + TPL_HOST_FUZZY_STRICT + ')'
+    TPL_EMAIL_FUZZY     = '(^|' + TEXT_SEPARATORS + '|"|\\(|' + SRC_Z_CC + ')' +
+                          '(' + SRC_EMAIL_NAME + '@' + TPL_HOST_FUZZY_STRICT + ')'
 
     # moved TPL_LINK_FUZZY and TPL_LINK_NO_IP_FUZZY into build_re
 
@@ -152,7 +155,9 @@ module LinkifyRe
           '\\"(?:(?!' + SRC_Z_CC + '|["]).)+\\"|' +
           "\\'(?:(?!" + SRC_Z_CC + "|[']).)+\\'|" +
           "\\'(?=" + SRC_PSEUDO_LETTER + '|[-]).|' +  # allow `I'm_king` if no pair found
-          '\\.{2,3}[a-zA-Z0-9%/]|' + # github has ... in commit range links. Restrict to
+          '\\.{2,4}[a-zA-Z0-9%/]|' + # github has ... in commit range links,
+                                     # google has .... in links (issue #66)
+                                     # Restrict to
                                      # - english
                                      # - percent-encoded
                                      # - parts of file path
